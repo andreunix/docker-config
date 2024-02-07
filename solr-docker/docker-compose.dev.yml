@@ -2,10 +2,10 @@ version: '3'
 
 services:
   solr_node_1:
-    image: ghcr.io/andreunix/solr:latest
+    build: .
     container_name: solr_node_1
     ports:
-      - "127.0.0.1:8981:8983"
+      - "8981:8983"
     environment:
       - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
       - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
@@ -15,36 +15,55 @@ services:
       - zoo1
       - zoo2
       - zoo3
-
+    volumes:
+      - storage_solr_node_1:/var/solr
+  
   solr_node_2:
-    image: ghcr.io/andreunix/solr:latest
+    build: .
     container_name: solr_node_2
     ports:
-      - "127.0.0.1:8982:8983"
+      - "8982:8983"
     environment:
       - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
       - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
     networks:
       - solr
-    depends_on:
-      - zoo1
-      - zoo2
-      - zoo3
 
-  solr_node_3:
-    image: ghcr.io/andreunix/solr:latest
-    container_name: solr_node_3
-    ports:
-      - "127.0.0.1:8983:8983"
-    environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-      - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
-    networks:
-      - solr
     depends_on:
       - zoo1
       - zoo2
       - zoo3
+    volumes:
+      - storage_solr_node_2:/var/solr
+
+  # solr_node_3:
+  #   build: .
+  #   container_name: solr_node_3
+  #   ports:
+  #     - "8983:8983"
+  #   environment:
+  #     - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+  #   networks:
+  #     - solr
+  #   depends_on:
+  #     - zoo1
+  #     - zoo2
+  #     - zoo3
+  #   volumes:
+  #     - storage_solr_node_3:/var/solr
+  # solr_node_4:
+  #   image: solr:${SOLR_VERSION}
+  #   container_name: solr_node_4
+  #   ports:
+  #    - "8984:8983"
+  #   environment:
+  #     - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
+  #   networks:
+  #     - solr
+  #   depends_on:
+  #     - zoo1
+  #     - zoo2
+  #     - zoo3
 
   zoo1:
     image: zookeeper
@@ -52,8 +71,8 @@ services:
     restart: always
     hostname: zoo1
     ports:
-      - 127.0.0.1:2181:2181
-      - 127.0.0.1:7001:7000
+      - 2181:2181
+      - 7001:7000
     environment:
       ZOO_MY_ID: 1
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
@@ -62,14 +81,15 @@ services:
     networks:
       - solr
 
+
   zoo2:
     image: zookeeper
     container_name: zoo2
     restart: always
     hostname: zoo2
     ports:
-      - 127.0.0.1:2182:2181
-      - 127.0.0.1:7002:7000
+      - 2182:2181
+      - 7002:7000
     environment:
       ZOO_MY_ID: 2
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
@@ -84,8 +104,8 @@ services:
     restart: always
     hostname: zoo3
     ports:
-      - 127.0.0.1:2183:2181
-      - 127.0.0.1:7003:7000
+      - 2183:2181
+      - 7003:7000
     environment:
       ZOO_MY_ID: 3
       ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
@@ -93,7 +113,6 @@ services:
       ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
     networks:
       - solr
-      
 networks:
   solr:
 

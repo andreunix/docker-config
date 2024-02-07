@@ -1,2 +1,3 @@
 .env
-dataleakconf 
+dataleakconf
+mycli.sh
