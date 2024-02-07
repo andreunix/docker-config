@@ -1,5 +1,7 @@
 FROM solr:9.4.1
 
+LABEL org.opencontainers.image.source https://github.com/andreunix/docker/solr-docker
+
 COPY myconfig /opt/solr/server/solr/configsets/myconfig
 
 COPY start.sh /opt/solr-9.4.1/docker/scripts/start.sh
