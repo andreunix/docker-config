@@ -5,12 +5,17 @@ services:
     image: ghcr.io/andreunix/solr:latest
     container_name: solr_node_1
     ports:
-      - "127.0.0.1:8981:8983"
+      - "8981:8983"
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-      - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
     networks:
       - solr
+    volumes:
+      - storage_solr_node_1:/var/solr
     depends_on:
       - zoo1
       - zoo2
@@ -20,27 +25,38 @@ services:
     image: ghcr.io/andreunix/solr:latest
     container_name: solr_node_2
     ports:
-      - "127.0.0.1:8982:8983"
+      - "8982:8983"
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-      - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
     networks:
       - solr
+    volumes:
+      - storage_solr_node_2:/var/solr    
     depends_on:
       - zoo1
       - zoo2
       - zoo3
 
+
   solr_node_3:
     image: ghcr.io/andreunix/solr:latest
     container_name: solr_node_3
     ports:
-      - "127.0.0.1:8983:8983"
+      - "8983:8983"
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-      - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
     networks:
       - solr
+    volumes:
+      - storage_solr_node_3:/var/solr    
     depends_on:
       - zoo1
       - zoo2
@@ -50,16 +66,23 @@ services:
     image: ghcr.io/andreunix/solr:latest
     container_name: solr_node_4
     ports:
-      - "127.0.0.1:8983:8983"
+      - "8984:8983"
     environment:
-      - ZK_HOST=zoo1:2181,zoo2:2181,zoo3:2181
-      - SOLR_ZK_CREDS_AND_ACLS=${SOLR_ZK_CREDS_AND_ACLS}
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
     networks:
-      - solr
+      - solr    
+    volumes:
+      - storage_solr_node_4:/var/solr
     depends_on:
       - zoo1
       - zoo2
       - zoo3
+
+
 
   zoo1:
     image: zookeeper
@@ -67,11 +90,11 @@ services:
     restart: always
     hostname: zoo1
     ports:
-      - 127.0.0.1:2181:2181
-      - 127.0.0.1:7001:7000
+      - 2181:2181
+      - 7001:7000
     environment:
       ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_SERVERS: ${ZOO_SERVERS}
       ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
       ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
     networks:
@@ -83,11 +106,11 @@ services:
     restart: always
     hostname: zoo2
     ports:
-      - 127.0.0.1:2182:2181
-      - 127.0.0.1:7002:7000
+      - 2182:2181
+      - 7002:7000
     environment:
       ZOO_MY_ID: 2
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_SERVERS: ${ZOO_SERVERS}
       ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
       ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
     networks:
@@ -103,7 +126,7 @@ services:
       - 127.0.0.1:7003:7000
     environment:
       ZOO_MY_ID: 3
-      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+      ZOO_SERVERS: ${ZOO_SERVERS}
       ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
       ZOO_CFG_EXTRA: "metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider metricsProvider.httpPort=7000 metricsProvider.exportJvmInfo=true"
     networks:
