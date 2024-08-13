@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  solr_node_test:
+    build: .
+    container_name: solr_node_test
+    ports:
+      - "8983:8983"
+    environment:
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
+    networks:
+      - solr
+    volumes:
+      - storage_solr_node_test:/var/solr
+      
+networks:
+  solr:
+
+volumes:
+  storage_solr_node_test:

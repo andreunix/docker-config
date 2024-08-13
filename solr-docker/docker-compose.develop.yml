@@ -2,7 +2,7 @@ version: '3'
 
 services:
   solr_node_1:
-    image: ghcr.io/andreunix/solr:latest
+    image: solr:latest
     container_name: solr_node_1
     ports:
       - "8981:8983"
@@ -40,6 +40,48 @@ services:
       - zoo1
       - zoo2
       - zoo3
+
+
+  solr_node_3:
+    image: ghcr.io/andreunix/solr:latest
+    container_name: solr_node_3
+    ports:
+      - "8983:8983"
+    environment:
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
+    networks:
+      - solr
+    volumes:
+      - storage_solr_node_3:/var/solr    
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
+  solr_node_4:
+    image: ghcr.io/andreunix/solr:latest
+    container_name: solr_node_4
+    ports:
+      - "8984:8983"
+    environment:
+      ZK_HOST: ${ZK_HOST}
+      ZK_DIGEST_USERNAME: ${ZK_DIGEST_USERNAME}
+      ZK_DIGEST_PASSWORD: ${ZK_DIGEST_PASSWORD}
+      ZK_DIGEST_READONLY_USERNAME: ${ZK_DIGEST_READONLY_USERNAME}
+      ZK_DIGEST_READONLY_PASSWORD: ${ZK_DIGEST_READONLY_PASSWORD}
+    networks:
+      - solr    
+    volumes:
+      - storage_solr_node_4:/var/solr
+    depends_on:
+      - zoo1
+      - zoo2
+      - zoo3
+
 
 
   zoo1:
